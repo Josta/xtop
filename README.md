@@ -20,6 +20,19 @@ to include three hierarchy levels (also sets the initial depth in the TUI). Run 
 own user; use `sudo ./target/release/xtop` if you need access to other users'
 memory accounting. Root also gives signal controls broader permissions.
 
+### Nix and NixOS
+
+With Nix flakes enabled, run `nix run .` from this checkout to open xtop or
+`nix run . -- --once` for a plain-text snapshot. Use `nix build .` to build
+`result/bin/xtop`. The flake provides packages for x86-64 and ARM64 Linux.
+
+To install xtop system-wide, add `inputs.xtop.url = "github:Josta/xtop";`
+to your NixOS flake (use `path:/absolute/path/to/xtop` for a local checkout).
+Add `inputs.xtop.nixosModules.default` to your host's module list, set
+`programs.xtop.enable = true;` in the host configuration, and rebuild. If you
+use `configuration.nix` without flakes, add the checkout's `nix/module.nix`
+to `imports` and set the same option.
+
 ## Interaction
 
 The summary uses three lines, irrespective of CPU count. Most horizontal space
