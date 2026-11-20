@@ -1,0 +1,54 @@
+# Live location: ~/.config/xtop/config.toml (or $XDG_CONFIG_HOME/xtop/config.toml).
+# Restart xtop after editing. Display toggles also have keys/settings in the UI.
+refresh_ms = 1000
+memory_refresh_ms = 5000
+history_seconds = 300
+mouse = true
+show_system = false       # S toggles Linux/KDE infrastructure in every view
+workload_tree = true     # H toggles nested processes and inclusive parent totals
+
+# Application names can span multiple cgroups. Built-in recognition already
+# handles Chromium/Chrome, Docker, Slack and Firefox; these show how to override.
+# Matchers within a table are ANDed; tables are first-match-wins.
+# Regexes use Rust regex syntax. Single quotes avoid TOML backslash escaping.
+[[applications]]
+name = "Chromium"
+cgroup_regex = '(^|/)snap\.chromium\.'
+
+[[applications]]
+name = "Docker"
+cgroup_regex = '(^|/)(docker-desktop|docker|containerd)\.service(/|$)|(^|/)app-docker-desktop-'
+
+# Optional application override example:
+# [[applications]]
+# name = "My editor"
+# exe_regex = '/(code|code-insiders)$'
+# system = false         # optional override of the system classification
+# service = false        # optional override of placement in the Services section
+
+# Custom workload rules run BEFORE application recognition. Each process is
+# matched individually. String *_contains matchers are literal, case-sensitive.
+# Supported regexes: exe_regex, command_regex, cgroup_regex, name_regex (comm).
+[[rules]]
+group = "Coding agents"
+exe_contains = "codex"
+
+# Claude native installs use a version filename; /proc/comm is still claude.
+[[rules]]
+group = "Coding agents"
+name_regex = '^claude$'
+
+[[rules]]
+group = "Work projects"
+cwd_prefix = "/home/me/projects/work/"
+
+[[rules]]
+group = "Personal projects"
+cwd_prefix = "/home/me/projects/personal/"
+
+# Override system status without treating every root-owned daemon as system:
+# [[rules]]
+# group = "My service"
+# name_regex = '^my-daemon$'
+# system = false
+# service = true
